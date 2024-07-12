@@ -15,7 +15,7 @@ import java.util.Optional;
 
 /**
  * An interface for building suggestions for the
- * {@link io.github.darkkronicle.advancedchat.chat.ChatSuggestor}
+ * {@link io.github.darkkronicle.advancedchatbox.chat.ChatSuggestor}
  */
 public interface IMessageSuggestor {
     /**
