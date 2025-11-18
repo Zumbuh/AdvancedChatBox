@@ -33,6 +33,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.network.ClientCommandSource;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandSource;
 
 /** A maintainer of suggestions to suggest to the player. */
@@ -42,7 +44,7 @@ public class ChatSuggestor {
 
     /** Parsed command results */
     @Getter
-    private ParseResults<CommandSource> parse;
+    private ParseResults<ClientCommandSource> parse;
 
     /** Suggestions to complete */
     @Getter
@@ -100,7 +102,8 @@ public class ChatSuggestor {
      */
     public void updateCommandSuggestions(Runnable after) {
         allSuggestions = null;
-        CommandDispatcher<CommandSource> commandDispatcher = client.player.networkHandler.getCommandDispatcher();
+        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+        CommandDispatcher<ClientCommandSource> commandDispatcher = networkHandler.getCommandDispatcher();
         pendingSuggestions = commandDispatcher.getCompletionSuggestions(this.parse, getCursorIndex())
                 .thenApplyAsync(AdvancedSuggestions::fromSuggestions);
         if (after != null) {
@@ -114,7 +117,8 @@ public class ChatSuggestor {
      * @param stringReader StringReader which contains reading string
      */
     public void updateParse(StringReader stringReader) {
-        CommandDispatcher<CommandSource> commandDispatcher = client.player.networkHandler.getCommandDispatcher();
+        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+        CommandDispatcher<ClientCommandSource> commandDispatcher = networkHandler.getCommandDispatcher();
         if (parse == null) {
             parse = commandDispatcher.parse(stringReader, client.player.networkHandler.getCommandSource());
         }
